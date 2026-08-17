@@ -1,3 +1,7 @@
+/*
+    should not put these ifs inside my controllers </3
+ */
+
 package org.hei.kdot.task.controllers;
 
 import org.hei.kdot.task.models.Step;
@@ -23,6 +27,15 @@ public class UserController {
         this.taskService = taskService;
         this.userService = userService;
         this.stepService = stepService;
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<User> createUser(@RequestBody User user) throws SQLException {
+        User createdUser = userService.create(user);
+
+        return ResponseEntity
+                .status(201)
+                .body(createdUser);
     }
 
     @GetMapping("/{id}/tasks")
