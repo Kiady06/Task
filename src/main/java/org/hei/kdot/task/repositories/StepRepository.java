@@ -141,4 +141,41 @@ public class StepRepository {
             return statement.executeUpdate() > 0;
         }
     }
+
+    public List<Step> findByTaskIdAndIsCompleted(
+            String taskId,
+            boolean isCompleted
+    ) throws SQLException {
+
+        String sql = """
+            SELECT id, title, description, is_completed, id_task
+            FROM step
+            WHERE id_task = ?
+            AND is_completed = ?
+            """;
+
+        List<Step> steps = new ArrayList<>();
+
+        try (
+                Connection connection = databaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setString(1, taskId);
+            statement.setBoolean(2, isCompleted);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    steps.add(new Step(
+                            resultSet.getString("id"),
+                            resultSet.getString("title"),
+                            resultSet.getString("description"),
+                            resultSet.getBoolean("is_completed"),
+                            resultSet.getString("id_task")
+                    ));
+                }
+            }
+        }
+
+        return steps;
+    }
 }
